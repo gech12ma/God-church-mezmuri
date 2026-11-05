@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="am">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#173b2b">
+<meta name="description" content="God Church Mezmur Debter - የመዝሙር መዝገብ">
+<link rel="manifest" href="manifest.json">
+<title>God Church Mezmur Debter</title>
+<style>
+:root{--green:#173b2b;--green2:#24563e;--gold:#e8bd62;--bg:#f5f4ef;--card:#fff;--ink:#1f2923;--muted:#68736c;--line:#e5e8e2}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans Ethiopic","Abyssinica SIL",system-ui,sans-serif}
+header{background:linear-gradient(135deg,var(--green),var(--green2));color:#fff;padding:25px 18px 22px;border-radius:0 0 24px 24px}
+.brand{font-size:12px;letter-spacing:.5px;color:#dce9df}.brand-title{font-size:23px;font-weight:800;margin:7px 0 4px}.sub{font-size:13px;color:#e3eee5}
+main{max-width:720px;margin:auto;padding:16px 14px 90px}
+.search{display:flex;gap:8px;margin-top:16px}.search input{flex:1}
+input,textarea,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:13px;background:#fff;font:inherit;color:var(--ink);outline:none}
+input:focus,textarea:focus,select:focus{border-color:var(--green2);box-shadow:0 0 0 3px #24563e18}
+button{border:0;border-radius:12px;padding:12px 15px;font:inherit;font-weight:700;cursor:pointer}
+.primary{background:var(--green);color:white}.secondary{background:#e8eee8;color:var(--green)}.gold{background:var(--gold);color:#302512}
+.tabs{display:flex;gap:8px;overflow:auto;padding:14px 0 6px}.tab{white-space:nowrap;background:#e9ede7;color:#435348}.tab.active{background:var(--green);color:#fff}
+.section-head{display:flex;justify-content:space-between;align-items:center;margin:16px 2px 10px}.section-head h2{font-size:17px;margin:0}.muted{color:var(--muted);font-size:13px}
+.song{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:9px 0;box-shadow:0 2px 8px #14251a08}
+.songtop{display:flex;align-items:flex-start;gap:10px}.songtitle{font-weight:800;font-size:17px;flex:1}.songmeta{font-size:12px;color:var(--muted);margin-top:4px}
+.songactions{display:flex;gap:6px}.iconbtn{background:#f0f3ef;color:var(--green);padding:7px 10px}.lyrics{white-space:pre-wrap;line-height:1.9;margin:12px 0 2px;font-size:15px;display:none}.lyrics.show{display:block}
+.empty{text-align:center;padding:35px 15px;color:var(--muted);background:#fff;border-radius:16px;border:1px dashed #cdd6cc}
+dialog{border:0;border-radius:20px;padding:0;width:min(94%,560px);max-height:90vh;box-shadow:0 20px 70px #0004}dialog::backdrop{background:#0b1b12a8}.modalhead{background:var(--green);color:#fff;padding:17px 20px;font-weight:800;font-size:18px}.modalbody{padding:18px;overflow:auto}.field{margin-bottom:13px}.field label{display:block;font-size:13px;font-weight:700;margin:0 0 6px}.modalfoot{display:flex;gap:8px;padding:0 18px 18px}.modalfoot button{flex:1}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:20px 0}
+.fab{position:fixed;right:18px;bottom:20px;width:58px;height:58px;border-radius:50%;font-size:27px;background:var(--gold);color:#2b2415;box-shadow:0 5px 18px #0003}
+@media(min-width:600px){header{padding-left:max(22px,calc((100% - 680px)/2));padding-right:max(22px,calc((100% - 680px)/2))}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">የእግዚአብሔር ቤተ ክርስቲያን</div>
+  <div class="brand-title">God Church Mezmur Debter</div>
+  <div class="sub">የመዝሙር መዝገብ • ቃሉን በዝማሬ እናክብር</div>
+</header>
+<main>
+  <div class="search">
+    <input id="search" placeholder="መዝሙር ፈልግ..." aria-label="መዝሙር ፈልግ">
+    <button class="primary" id="searchBtn">ፈልግ</button>
+  </div>
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-view="all">ሁሉም</button>
+    <button class="tab" data-view="favorites">የተወደዱ</button>
+    <button class="tab" data-view="worship">የአምልኮ</button>
+    <button class="tab" data-view="praise">የምስጋና</button>
+    <button class="tab" data-view="other">ሌሎች</button>
+  </div>
+  <div class="section-head">
+    <h2 id="listTitle">ሁሉም መዝሙሮች</h2>
+    <span class="muted" id="count">0 መዝሙር</span>
+  </div>
+  <section id="songList"></section>
+  <footer>God Church Mezmur Debter • በስልክዎ ላይ የተቀመጡ መዝሙሮች</footer>
+</main>
+<button class="fab" id="addBtn" aria-label="መዝሙር ጨምር">＋</button>
+
+<dialog id="songDialog">
+  <div class="modalhead" id="dialogTitle">አዲስ መዝሙር ጨምር</div>
+  <form id="songForm">
+    <div class="modalbody">
+      <input type="hidden" id="songId">
+      <div class="field"><label for="title">የመዝሙሩ ርዕስ *</label><input id="title" required maxlength="100" placeholder="ርዕስ ያስገቡ"></div>
+      <div class="field"><label for="category">ምድብ</label><select id="category"><option value="worship">የአምልኮ</option><option value="praise">የምስጋና</option><option value="other">ሌሎች</option></select></div>
+      <div class="field"><label for="lyrics">የመዝሙሩ ግጥም *</label><textarea id="lyrics" required rows="9" placeholder="የመዝሙሩን ግጥም እዚህ ያስገቡ..."></textarea></div>
+      <p class="muted">እባክዎ ቤተ ክርስቲያኑ የመጠቀም ፈቃድ ያለውን ግጥም ብቻ ያስገቡ።</p>
+    </div>
+    <div class="modalfoot"><button type="button" class="secondary" id="cancelBtn">ተወው</button><button class="primary" type="submit">አስቀምጥ</button></div>
+  </form>
+</dialog>
+<script>
+const KEY='godChurchMezmurSongs_v1';
+let songs=[];
+let currentView='all';
+const $=id=>document.getElementById(id);
+function load(){try{songs=JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){songs=[]}}
+function save(){localStorage.setItem(KEY,JSON.stringify(songs));render()}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function categoryName(c){return c==='worship'?'የአምልኮ':c==='praise'?'የምስጋና':'ሌሎች'}
+function render(){
+ const q=$('search').value.trim().toLowerCase();
+ let shown=songs.filter(s=>{
+  const match=(s.title+' '+s.lyrics).toLowerCase().includes(q);
+  const view=currentView==='all'||(currentView==='favorites'?s.favorite:currentView===s.category);
+  return match&&view;
+ });
+ $('count').textContent=shown.length+' መዝሙር';
+ $('listTitle').textContent=currentView==='favorites'?'የተወደዱ መዝሙሮች':currentView==='all'?'ሁሉም መዝሙሮች':categoryName(currentView)+' መዝሙሮች';
+ const list=$('songList');
+ if(!shown.length){list.innerHTML='<div class="empty"><div style="font-size:30px">♫</div><b>መዝሙር አልተገኘም</b><p>አዲስ መዝሙር ለመጨመር የ＋ ቁልፉን ይጫኑ።</p></div>';return}
+ list.innerHTML=shown.map(s=>`<article class="song">
+  <div class="songtop"><div style="flex:1"><div class="songtitle">${esc(s.title)}</div><div class="songmeta">${categoryName(s.category)}</div></div>
+  <div class="songactions"><button class="iconbtn" title="ተወዳጅ" onclick="toggleFav('${s.id}')">${s.favorite?'★':'☆'}</button><button class="iconbtn" title="አርትዕ" onclick="editSong('${s.id}')">✎</button><button class="iconbtn" title="ሰርዝ" onclick="deleteSong('${s.id}')">×</button></div></div>
+  <button class="secondary" style="margin-top:12px;width:100%" onclick="toggleLyrics('${s.id}')">ግጥሙን አሳይ / ደብቅ</button>
+  <div class="lyrics" id="lyrics-${s.id}">${esc(s.lyrics)}</div>
+ </article>`).join('');
+}
+function toggleFav(id){const s=songs.find(x=>x.id===id);if(s){s.favorite=!s.favorite;save()}}
+function toggleLyrics(id){const el=$('lyrics-'+id);if(el)el.classList.toggle('show')}
+function editSong(id){const s=songs.find(x=>x.id===id);if(!s)return;$('songId').value=s.id;$('title').value=s.title;$('category').value=s.category;$('lyrics').value=s.lyrics;$('dialogTitle').textContent='መዝሙር አርትዕ';$('songDialog').showModal()}
+function deleteSong(id){if(confirm('ይህን መዝሙር ማጥፋት ይፈልጋሉ?')){songs=songs.filter(s=>s.id!==id);save()}}
+function openAdd(){$('songForm').reset();$('songId').value='';$('dialogTitle').textContent='አዲስ መዝሙር ጨምር';$('songDialog').showModal()}
+$('addBtn').onclick=openAdd;$('cancelBtn').onclick=()=>$('songDialog').close();
+$('songForm').onsubmit=e=>{e.preventDefault();const id=$('songId').value;const item={id:id||String(Date.now()),title:$('title').value.trim(),category:$('category').value,lyrics:$('lyrics').value.trim(),favorite:id?(songs.find(s=>s.id===id)?.favorite||false):false};if(!item.title||!item.lyrics)return;if(id){songs=songs.map(s=>s.id===id?item:s)}else songs.unshift(item);save();$('songDialog').close()};
+$('search').addEventListener('input',render);$('searchBtn').onclick=render;
+$('tabs').addEventListener('click',e=>{const b=e.target.closest('button[data-view]');if(!b)return;currentView=b.dataset.view;document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));render()});
+load();render();
+if('serviceWorker' in navigator && location.protocol.startsWith('http')){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
+</script>
+</body>
+</html>
